@@ -37,18 +37,18 @@ Estratégias e atividades
 		- É o corpo da tabela onde vai os dados importantes\.
 
 1. Hoje nós começaremos tendo 2 arquivos e uma pasta chamada __images__ no Visual Studio Code:  
-![](https://raw.githubusercontent.com/YanBarbosaLouzada/docx-to-md/master/imagens/img_1758130414985765200.png)
-2. Criaremos uma página inicial muito parecida com a última aula, porém com um link indo até a página de comidas:![](https://raw.githubusercontent.com/YanBarbosaLouzada/docx-to-md/master/imagens/img_1758130414987765600.png)
-3.  Repare que agora tem um um link para ir para a página de comida:![](https://raw.githubusercontent.com/YanBarbosaLouzada/docx-to-md/master/imagens/img_1758130414988765800.png)
+![](https://raw.githubusercontent.com/YanBarbosaLouzada/docx-to-md/master/imagens/img_1758130600408197900.png)
+2. Criaremos uma página inicial muito parecida com a última aula, porém com um link indo até a página de comidas:![](https://raw.githubusercontent.com/YanBarbosaLouzada/docx-to-md/master/imagens/img_1758130600410197100.png)
+3.  Repare que agora tem um um link para ir para a página de comida:![](https://raw.githubusercontent.com/YanBarbosaLouzada/docx-to-md/master/imagens/img_1758130600411197100.png)
 4. O código da página de comidas\. Repare que existe um <thead> com um <b> dentro para que os nomes que tem no cabeçalho da tabela em negrito:  
-![](https://raw.githubusercontent.com/YanBarbosaLouzada/docx-to-md/master/imagens/img_1758130414996917500.png)
+![](https://raw.githubusercontent.com/YanBarbosaLouzada/docx-to-md/master/imagens/img_1758130600418196900.png)
 5. E o resultado do código é:
 
-![](https://raw.githubusercontent.com/YanBarbosaLouzada/docx-to-md/master/imagens/img_1758130414999920200.png)  
+![](https://raw.githubusercontent.com/YanBarbosaLouzada/docx-to-md/master/imagens/img_1758130600421197900.png)  
 Repare que o motivo das imagens estarem pequenas é que nelas tem um atributo chamado __width__, onde controlamos o tamanho da imagem\.
 
 1. Agora de desafio, o aluno vai tentar montar uma tabela customizada\. Lembrando sempre de adaptar o endereço do src=”\./nomeDaPAsta/nomeDoArquivo”
-2. Salvar as modificações do Git:![](https://raw.githubusercontent.com/YanBarbosaLouzada/docx-to-md/master/imagens/img_1758130415001917900.png)
+2. Salvar as modificações do Git:![](https://raw.githubusercontent.com/YanBarbosaLouzada/docx-to-md/master/imagens/img_1758130600423197000.png)
 
 Recursos
 
