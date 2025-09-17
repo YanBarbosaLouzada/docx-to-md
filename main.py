@@ -8,20 +8,18 @@ USUARIO = "YanBarbosaLouzada"
 REPO = "https://github.com/YanBarbosaLouzada/docx-to-md.git"
 BRANCH = "master"  # ou "main"
 IMG_FOLDER = "imagens"
-
-# cria a pasta se não existir
 os.makedirs(IMG_FOLDER, exist_ok=True)
 
 def image_handler(image):
-    # nome único pra imagem
     file_name = f"img_{int(time.time())}.png"
     file_path = os.path.join(IMG_FOLDER, file_name)
 
-    # salva local
-    with open(file_path, "wb") as f:
-        f.write(image.read())
+    # salva imagem em disco
+    with image.open() as img_file:
+        with open(file_path, "wb") as f:
+            f.write(img_file.read())
 
-    # monta a URL crua do GitHub
+    # monta URL do GitHub RAW
     url = f"https://raw.githubusercontent.com/{USUARIO}/{REPO}/{BRANCH}/{IMG_FOLDER}/{file_name}"
 
     return {"src": url}
@@ -39,9 +37,12 @@ def docx_to_markdown(input_path, output_path):
         md_file.write(markdown)
 
     print(f"✅ Markdown gerado: {output_path}")
-    print(f"🖼️ Imagens salvas na pasta: {IMG_FOLDER}/")
-    print("🚀 Agora é só dar commit/push no GitHub para as URLs ficarem ativas.")
-    
+    print(f"🖼️ Imagens salvas em: {IMG_FOLDER}/")
+    print("🚀 Agora só dar git add/commit/push para ativar as URLs")
+
 
 if __name__ == "__main__":
-    docx_to_markdown("meuarquivo.docx", "saida.md")
+    docx_to_markdown(
+        "Aula 02 - Tabelas, links, imagens & organização de pastas.docx",
+        "Aula 02 - Tabelas, links, imagens & organização de pastas.md"
+    )
