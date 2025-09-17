@@ -14,7 +14,7 @@ os.makedirs(IMG_FOLDER, exist_ok=True)
 # Arquivo que vai guardar as URLs
 URL_FILE = "imagens_urls.txt"
 
-# Limpa arquivo de URLs antes de cada conversão
+# Limpa arquivo de URLs antes de começar
 open(URL_FILE, "w", encoding="utf-8").close()
 
 def image_handler(image):
@@ -36,27 +36,31 @@ def image_handler(image):
     return {"src": url}
 
 def docx_to_markdown(input_path, output_path):
-    # Garante que a pasta do Markdown existe
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
 
-    # Converte DOCX para Markdown
     with open(input_path, "rb") as docx_file:
         result = mammoth.convert_to_markdown(
             docx_file,
             convert_image=mammoth.images.inline(image_handler)
         )
 
-    # Salva Markdown
     with open(output_path, "w", encoding="utf-8") as md_file:
         md_file.write(result.value)
 
     print(f"✅ Markdown gerado: {output_path}")
-    print(f"🖼️ Imagens salvas em: {IMG_FOLDER}/")
-    print(f"🔗 URLs das imagens salvas em: {URL_FILE}")
-    print("🚀 Agora é só copiar as URLs de lá ou fazer git add/commit/push para usar no GitHub")
 
-if __name__ == "__main__":
-    docx_to_markdown(
-        "Aula 02 - Tabelas, links, imagens & organização de pastas.docx",
-        "Aula 02 - Tabelas, links, imagens & organização de pastas.md"
-    )
+# --- PROCESSA TODOS OS DOCX DE UMA PASTA ---
+DOCX_FOLDER = "docx"  # pasta onde estão os arquivos
+OUTPUT_FOLDER = "markdown"  # pasta pra salvar os MD
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+
+for file_name in os.listdir(DOCX_FOLDER):
+    if file_name.endswith(".docx"):
+        input_path = os.path.join(DOCX_FOLDER, file_name)
+        output_file = file_name.replace(".docx", ".md")
+        output_path = os.path.join(OUTPUT_FOLDER, output_file)
+
+        docx_to_markdown(input_path, output_path)
+
+print(f"🖼️ Todas as imagens estão em: {IMG_FOLDER}/")
+print(f"🔗 Todas as URLs em: {URL_FILE}")
