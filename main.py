@@ -1,48 +1,77 @@
-import mammoth
-import time
+import pypandoc
+import base64
 import os
-import shutil
+import re
+import glob
+from pathlib import Path
 
-# Configurações do seu GitHub
-USUARIO = "YanBarbosaLouzada"
-REPO = "https://github.com/YanBarbosaLouzada/docx-to-md.git"
-BRANCH = "master"  # ou "main"
-IMG_FOLDER = "imagens"
-os.makedirs(IMG_FOLDER, exist_ok=True)
+# 📂 Ajuste os caminhos conforme necessário
+input_dir = r"C:\Users\JGFel\Documents\python\ConversorMark"
+output_dir = r"C:\Users\JGFel\Documents\python\ConversorMark\markdowns"
 
-def image_handler(image):
-    file_name = f"img_{int(time.time())}.png"
-    file_path = os.path.join(IMG_FOLDER, file_name)
+os.makedirs(output_dir, exist_ok=True)
 
-    # salva imagem em disco
-    with image.open() as img_file:
-        with open(file_path, "wb") as f:
-            f.write(img_file.read())
+def convert_docx_to_md(input_file, output_file, media_dir_for_file):
+    os.makedirs(media_dir_for_file, exist_ok=True)
 
-    # monta URL do GitHub RAW
-    url = f"https://raw.githubusercontent.com/{USUARIO}/{REPO}/{BRANCH}/{IMG_FOLDER}/{file_name}"
+    # 1) Converter DOCX -> MD
+    pypandoc.convert_file(
+        input_file,
+        "gfm",
+        outputfile=output_file,
+        extra_args=[f"--extract-media={media_dir_for_file}"]
+    )
 
-    return {"src": url}
+    # 2) Ler markdown gerado
+    with open(output_file, "r", encoding="utf-8") as f:
+        md_content = f.read()
 
+    # Regex para capturar qualquer <img ... src="...">
+    pattern = re.compile(
+        r'<img[^>]*?src=["\']([^"\']+)["\'][^>]*?>',
+        re.IGNORECASE | re.DOTALL
+    )
 
-def docx_to_markdown(input_path, output_path):
-    with open(input_path, "rb") as docx_file:
-        result = mammoth.convert_to_markdown(
-            docx_file,
-            convert_image=mammoth.images.inline(image_handler)
-        )
-        markdown = result.value
+    def img_to_base64(match):
+        img_path_raw = match.group(1).strip()
+        img_name = Path(img_path_raw).name  # só o nome (ex: image14.png)
 
-    with open(output_path, "w", encoding="utf-8") as md_file:
-        md_file.write(markdown)
+        # procurar recursivamente dentro da pasta de mídia
+        real_img = None
+        for root, _, files in os.walk(media_dir_for_file):
+            for f in files:
+                if f.lower() == img_name.lower():
+                    real_img = os.path.join(root, f)
+                    break
+            if real_img:
+                break
 
-    print(f"✅ Markdown gerado: {output_path}")
-    print(f"🖼️ Imagens salvas em: {IMG_FOLDER}/")
-    print("🚀 Agora só dar git add/commit/push para ativar as URLs")
+        if not real_img or not os.path.exists(real_img):
+            print(f"⚠️ Imagem não encontrada: {img_name}")
+            return ""  # remove a tag quebrada
 
+        ext = Path(real_img).suffix.lower().lstrip('.')
+        with open(real_img, "rb") as img_file:
+            img_bytes = img_file.read()
+        img_b64 = base64.b64encode(img_bytes).decode("utf-8")
+
+        return f"![image](data:image/{ext};base64,{img_b64})"
+
+    # 3) Substituir todas imagens pelo formato embedado
+    md_content = pattern.sub(img_to_base64, md_content)
+
+    # 4) Salvar markdown final autossuficiente
+    with open(output_file, "w", encoding="utf-8") as f:
+        f.write(md_content)
+
+def process_all_docx(input_dir, output_dir):
+    for docx_file in glob.glob(os.path.join(input_dir, "*.docx")):
+        file_name = Path(docx_file).stem
+        md_file = os.path.join(output_dir, f"{file_name}.md")
+        media_dir_for_file = os.path.join(output_dir, f"{file_name}_media")
+        convert_docx_to_md(docx_file, md_file, media_dir_for_file)
+        print(f"✅ {file_name} convertido -> {md_file}")
 
 if __name__ == "__main__":
-    docx_to_markdown(
-        "Aula 02 - Tabelas, links, imagens & organização de pastas.docx",
-        "Aula 02 - Tabelas, links, imagens & organização de pastas.md"
-    )
+    process_all_docx(input_dir, output_dir)
+    print("🎉 Conversão concluída! Agora seus .md são autossuficientes com imagens embutidas.")
